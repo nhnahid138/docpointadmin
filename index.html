@@ -756,14 +756,14 @@ function speak(text, lang){
 
 function unlockAudio(){
   if (isAudioUnlocked) return;
-  speak(latestVoiceLang === "bn" ? "ভয়েস সিস্টেম প্রস্তুত।" : "Voice system is ready.", latestVoiceLang);
+  speak("Voice system is ready.", "en");
   isAudioUnlocked = true;
   applyAudioUI();
 }
 
 $("testSoundBtn").addEventListener("click", () => {
   if (!isAudioUnlocked) { unlockAudio(); return; }
-  speak(latestVoiceLang === "bn" ? "সিস্টেম সঠিকভাবে কাজ করছে।" : "The system is functioning correctly.", latestVoiceLang);
+  speak("The system is functioning correctly.", "en");
 });
 
 function maybeAnnounce(){
@@ -773,10 +773,8 @@ function maybeAnnounce(){
   if (!patient) return;
   lastAnnouncedSerial = latestServing;
   const nextPatient = latestTokens.find(t => (t.serialNumber || 0) > latestServing);
-  const text = latestVoiceLang === "bn"
-    ? `এখন সিরিয়াল নাম্বার ${patient.serialNumber}, ${patient.patientName}, দয়া করে ভেতরে আসুন।`
-    : `Now serving serial number ${patient.serialNumber}, ${patient.patientName}. ${nextPatient ? `Next serving serial number ${nextPatient.serialNumber}.` : ""}`;
-  speak(text, latestVoiceLang);
+  const text = `Now serving serial number ${patient.serialNumber}, ${patient.patientName}. ${nextPatient ? `Next serving serial number ${nextPatient.serialNumber}.` : ""}`;
+  speak(text, "en");
 }
 
 window.addEventListener("beforeunload", () => {
