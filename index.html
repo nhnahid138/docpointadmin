@@ -259,9 +259,104 @@
 
   #mainStage{position:relative; grid-column:2/3; display:flex; min-height:0;}
 
+  /* ---------- PUBLIC STATUS PAGE ---------- */
+  #statusPage{
+    min-height:100vh; display:none; color:#fff; overflow:auto;
+    background:linear-gradient(180deg,#0F172A 0%,#1E293B 100%);
+  }
+  .status-shell{
+    min-height:100vh; display:grid; grid-template-columns:5fr 4fr; gap:40px; padding:40px;
+  }
+  .status-left{display:flex; flex-direction:column; align-items:center; min-width:0;}
+  .status-head{width:100%; display:flex; align-items:center; gap:20px; padding:20px;}
+  .status-logo{
+    width:80px; height:80px; border-radius:20px; background:#fff; color:#3B82F6;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden;
+    box-shadow:0 20px 40px rgba(0,0,0,.2);
+  }
+  .status-logo img{width:100%; height:100%; object-fit:cover;}
+  .status-logo svg{width:44px; height:44px;}
+  .status-hospital{min-width:0;}
+  .status-hospital h1{
+    font-size:32px; font-weight:900; letter-spacing:2px; line-height:1.1;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .status-hospital p{margin-top:8px; color:rgba(255,255,255,.42); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .status-counter{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; min-height:460px;}
+  .status-counter-label{color:#3B82F6; font-weight:900; letter-spacing:10px; font-size:24px; text-align:center;}
+  .status-circle{
+    width:min(34vw,450px); height:min(34vw,450px); min-width:300px; min-height:300px;
+    margin-top:30px; border-radius:50%; padding:34px;
+    background:linear-gradient(135deg,#6366F1,#4F46E5);
+    box-shadow:0 0 80px rgba(99,102,241,.32);
+  }
+  .status-circle-inner{
+    width:100%; height:100%; border-radius:50%; background:#0F172A;
+    display:flex; align-items:center; justify-content:center;
+  }
+  #statusNowNumber{font-size:min(13vw,180px); font-weight:900; line-height:1; color:#fff;}
+  .status-doctor{
+    display:flex; align-items:center; gap:25px; padding:28px 30px; margin:20px 20px 0;
+    background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); border-radius:32px;
+    max-width:720px; width:calc(100% - 40px);
+  }
+  .status-doc-img{
+    width:90px; height:90px; border-radius:50%; border:3px solid #3B82F6; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; overflow:hidden; background:rgba(255,255,255,.05);
+  }
+  .status-doc-img img{width:100%; height:100%; object-fit:cover;}
+  .status-doc-img svg{width:42px; height:42px; color:#fff;}
+  .status-doc-text{min-width:0;}
+  .status-doc-text h2{font-size:24px; font-weight:900; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .status-doc-text p{margin-top:6px; color:#3B82F6; font-size:14px; font-weight:900; letter-spacing:1.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .status-board{
+    min-height:0; display:flex; flex-direction:column; overflow:hidden;
+    background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); border-radius:40px;
+  }
+  .status-board-head{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:36px 40px;}
+  .status-board-head h2{font-size:28px; font-weight:900; letter-spacing:1px;}
+  #statusClock{padding:8px 15px; border-radius:12px; background:rgba(59,130,246,.12); color:#3B82F6; font-size:18px; font-weight:900; white-space:nowrap;}
+  .status-divider{height:1px; background:rgba(255,255,255,.08);}
+  #statusQueue{flex:1; overflow:auto; padding:24px 30px;}
+  .status-token{
+    display:flex; align-items:center; gap:25px; padding:24px; margin-bottom:15px; border-radius:25px;
+    background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.03);
+  }
+  .status-token.current{background:rgba(59,130,246,.12); border-color:rgba(59,130,246,.5);}
+  .status-token.done{background:rgba(255,255,255,.015);}
+  .status-token-num{
+    width:60px; height:60px; border-radius:18px; display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,.18); color:rgba(255,255,255,.7); font-size:24px; font-weight:900; flex-shrink:0;
+  }
+  .status-token.current .status-token-num{background:#3B82F6; color:#fff;}
+  .status-token.done .status-token-num{background:rgba(255,255,255,.06); color:rgba(255,255,255,.28);}
+  .status-token-name{flex:1; min-width:0; font-size:20px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .status-token.done .status-token-name{color:rgba(255,255,255,.25); text-decoration:line-through;}
+  .status-token svg{width:30px; height:30px; color:#3B82F6; flex-shrink:0;}
+  .status-token.done svg{width:24px; height:24px; color:rgba(255,255,255,.12);}
+  .status-empty,.status-error,.status-loading{display:flex; min-height:220px; align-items:center; justify-content:center; text-align:center; color:rgba(255,255,255,.35); font-size:18px; font-weight:700;}
+  .status-error{min-height:100vh; color:#FCA5A5; font-size:24px; padding:30px;}
+
   @media (max-width: 1100px){
     main{grid-template-columns:1fr; overflow-y:auto;}
     #mainStage{min-height:520px;}
+    .status-shell{grid-template-columns:1fr; padding:20px; gap:30px;}
+    .status-head{justify-content:center; padding:10px;}
+    .status-logo{width:60px; height:60px; border-radius:18px;}
+    .status-hospital h1{font-size:20px;}
+    .status-hospital p{font-size:14px;}
+    .status-counter{min-height:auto; padding:30px 0 10px;}
+    .status-counter-label{font-size:16px; letter-spacing:7px;}
+    .status-circle{width:300px; height:300px; min-width:0; min-height:0; padding:24px;}
+    #statusNowNumber{font-size:120px;}
+    .status-doctor{border-radius:28px; padding:22px; margin:20px 0 0; width:100%;}
+    .status-doc-text h2{font-size:20px;}
+    .status-board{height:600px; border-radius:30px;}
+    .status-board-head{padding:26px 24px;}
+    .status-board-head h2{font-size:22px;}
+    #statusQueue{padding:20px;}
+    .status-token{gap:16px; padding:18px;}
+    .status-token-name{font-size:17px;}
   }
 </style>
 </head>
@@ -321,6 +416,9 @@
   </main>
 </div>
 
+<!-- ===================== PUBLIC STATUS PAGE ===================== -->
+<div id="statusPage"></div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -346,6 +444,263 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 const $ = (id) => document.getElementById(id);
+
+/* ---------------- PUBLIC STATUS ROUTE ---------------- */
+let statusUnsubs = [];
+let statusClockTimer = null;
+let currentAuthUser = null;
+let statusState = {
+  userId: "",
+  doctorId: "",
+  hospital: {},
+  doctor: {},
+  serving: 0,
+  tokens: [],
+  error: "",
+  userLoaded: false,
+  doctorLoaded: false,
+  servingLoaded: false,
+  tokensLoaded: false
+};
+
+function escapeHtml(value){
+  return String(value ?? "").replace(/[&<>"']/g, (ch) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[ch]));
+}
+
+function getStatusParams(){
+  const hash = window.location.hash || "";
+  if (!hash.startsWith("#/status")) return null;
+  const queryText = hash.includes("?") ? hash.slice(hash.indexOf("?") + 1) : "";
+  const params = new URLSearchParams(queryText);
+  const userId = params.get("user_id") || params.get("adminId") || "";
+  const doctorId = params.get("doctor_id") || params.get("doctorId") || "";
+  if (!userId || !doctorId) return { error: "Missing user_id or doctor_id in QR URL" };
+  return { userId, doctorId };
+}
+
+function clearStatusSubs(){
+  statusUnsubs.forEach((unsub) => unsub());
+  statusUnsubs = [];
+  if (statusClockTimer) {
+    clearInterval(statusClockTimer);
+    statusClockTimer = null;
+  }
+}
+
+function setStatusVisibility(isStatus){
+  $("statusPage").style.display = isStatus ? "block" : "none";
+  $("loginScreen").style.display = isStatus ? "none" : $("loginScreen").style.display;
+  $("app").style.display = isStatus ? "none" : $("app").style.display;
+}
+
+function hospitalIcon(){
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a3 3 0 0 0-3 3v2H7a3 3 0 0 0-3 3v2a3 3 0 0 0 3 3h2v2a3 3 0 0 0 3 3 3 3 0 0 0 3-3v-2h2a3 3 0 0 0 3-3v-2a3 3 0 0 0-3-3h-2V5a3 3 0 0 0-3-3z"/></svg>`;
+}
+
+function doctorIcon(){
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>`;
+}
+
+function updateStatusClock(){
+  const el = $("statusClock");
+  if (!el) return;
+  el.textContent = new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+}
+
+function renderStatusPage(){
+  const root = $("statusPage");
+  if (!root) return;
+  if (statusState.error) {
+    root.innerHTML = `<div class="status-error">${escapeHtml(statusState.error)}</div>`;
+    return;
+  }
+
+  const hospital = statusState.hospital || {};
+  const doctor = statusState.doctor || {};
+  const hospName = hospital.name || "Hospital";
+  const hospAddr = hospital.address || "";
+  const hospLogo = hospital.logoUrl || "";
+  const docName = doctor.name || "Doctor";
+  const docImg = doctor.imageUrl || "";
+  const specialty = doctor.specialty || "";
+  const loading = !statusState.userLoaded || !statusState.doctorLoaded;
+  const queueLoading = !statusState.servingLoaded || !statusState.tokensLoaded;
+
+  const queueHtml = queueLoading
+    ? `<div class="status-loading">Loading live queue...</div>`
+    : statusState.tokens.length === 0
+      ? `<div class="status-empty">No entries today</div>`
+      : statusState.tokens.map((token) => {
+        const serial = token.serialNumber || 0;
+        const isServing = serial === statusState.serving;
+        const isDone = serial < statusState.serving;
+        const cls = isServing ? "current" : (isDone ? "done" : "");
+        const icon = isServing
+          ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M11 5 6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`
+          : isDone
+            ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M20 6 9 17l-5-5"/></svg>`
+            : "";
+        return `<div class="status-token ${cls}">
+          <div class="status-token-num">${escapeHtml(serial)}</div>
+          <div class="status-token-name">${escapeHtml(token.patientName || "Patient").toUpperCase()}</div>
+          ${icon}
+        </div>`;
+      }).join("");
+
+  root.innerHTML = `
+    <div class="status-shell">
+      <section class="status-left">
+        <div class="status-head">
+          <div class="status-logo">${hospLogo ? `<img src="${escapeHtml(hospLogo)}" alt="Hospital logo">` : hospitalIcon()}</div>
+          <div class="status-hospital">
+            <h1>${escapeHtml(hospName).toUpperCase()}</h1>
+            <p>${escapeHtml(hospAddr)}</p>
+          </div>
+        </div>
+
+        <div class="status-counter">
+          <div class="status-counter-label">NOW SERVING</div>
+          <div class="status-circle">
+            <div class="status-circle-inner">
+              <div id="statusNowNumber">${queueLoading ? "0" : escapeHtml(statusState.serving)}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="status-doctor">
+          <div class="status-doc-img">${docImg ? `<img src="${escapeHtml(docImg)}" alt="${escapeHtml(docName)}">` : doctorIcon()}</div>
+          <div class="status-doc-text">
+            <h2>${loading ? "LOADING..." : escapeHtml(docName).toUpperCase()}</h2>
+            <p>${escapeHtml(specialty).toUpperCase()}</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="status-board">
+        <div class="status-board-head">
+          <h2>LIVE QUEUE</h2>
+          <div id="statusClock"></div>
+        </div>
+        <div class="status-divider"></div>
+        <div id="statusQueue">${queueHtml}</div>
+      </section>
+    </div>`;
+  updateStatusClock();
+}
+
+function openStatusRoute(userId, doctorId){
+  clearSubs();
+  clearDoctorSubs();
+  clearStatusSubs();
+  setStatusVisibility(true);
+  statusState = {
+    userId,
+    doctorId,
+    hospital: {},
+    doctor: {},
+    serving: 0,
+    tokens: [],
+    error: "",
+    userLoaded: false,
+    doctorLoaded: false,
+    servingLoaded: false,
+    tokensLoaded: false
+  };
+  renderStatusPage();
+  statusClockTimer = setInterval(updateStatusClock, 30000);
+
+  statusUnsubs.push(onSnapshot(doc(db, "users", userId), (snap) => {
+    if (!snap.exists()) {
+      statusState.error = "Hospital Not Found";
+    } else {
+      statusState.hospital = snap.data().hospitalInfo || {};
+      statusState.userLoaded = true;
+    }
+    renderStatusPage();
+  }, (error) => {
+    statusState.error = `ACCESS DENIED: ${error.message}`;
+    renderStatusPage();
+  }));
+
+  statusUnsubs.push(onSnapshot(doc(db, "users", userId, "doctors", doctorId), (snap) => {
+    if (!snap.exists()) {
+      statusState.error = "Doctor Not Found";
+    } else {
+      statusState.doctor = snap.data() || {};
+      statusState.doctorLoaded = true;
+    }
+    renderStatusPage();
+  }, () => {
+    statusState.error = "ACCESS DENIED";
+    renderStatusPage();
+  }));
+
+  statusUnsubs.push(onSnapshot(doc(db, "users", userId, "doctors", doctorId, "now_serving", "info"), (snap) => {
+    statusState.serving = snap.exists() ? (snap.data().serving_count || 0) : 0;
+    statusState.servingLoaded = true;
+    renderStatusPage();
+  }, () => {
+    statusState.error = "ACCESS DENIED";
+    renderStatusPage();
+  }));
+
+  const tq = query(
+    collection(db, "users", userId, "tokens"),
+    where("doctorId", "==", doctorId),
+    where("dateString", "==", todayStr())
+  );
+  statusUnsubs.push(onSnapshot(tq, (snap) => {
+    const list = [];
+    snap.forEach((d) => list.push({ id: d.id, ...d.data() }));
+    list.sort((a, b) => (a.serialNumber || 0) - (b.serialNumber || 0));
+    statusState.tokens = list;
+    statusState.tokensLoaded = true;
+    renderStatusPage();
+  }, () => {
+    statusState.error = "ACCESS DENIED";
+    renderStatusPage();
+  }));
+}
+
+function routeStatusIfNeeded(){
+  const params = getStatusParams();
+  if (!params) return false;
+  if (params.error) {
+    setStatusVisibility(true);
+    $("statusPage").innerHTML = `<div class="status-error">${escapeHtml(params.error)}</div>`;
+    return true;
+  }
+  openStatusRoute(params.userId, params.doctorId);
+  return true;
+}
+
+function showAdminForCurrentAuth(){
+  clearStatusSubs();
+  $("statusPage").style.display = "none";
+  if (currentAuthUser) {
+    clearSubs();
+    adminUid = currentAuthUser.uid;
+    $("loginScreen").style.display = "none";
+    $("app").style.display = "flex";
+    loadHospitalInfo();
+    loadDoctors();
+  } else {
+    adminUid = null;
+    $("app").style.display = "none";
+    $("loginScreen").style.display = "flex";
+    $("loginPassword").value = "";
+  }
+}
+
+window.addEventListener("hashchange", () => {
+  if (!routeStatusIfNeeded()) showAdminForCurrentAuth();
+});
 
 /* ---------------- LOGIN ---------------- */
 $("loginForm").addEventListener("submit", async (e) => {
@@ -375,6 +730,8 @@ let unsubscribers = [];
 function clearSubs(){ unsubscribers.forEach(u => u()); unsubscribers = []; }
 
 onAuthStateChanged(auth, (user) => {
+  currentAuthUser = user;
+  if (getStatusParams()) return;
   clearSubs();
   if (user) {
     adminUid = user.uid;
@@ -566,6 +923,8 @@ function todayStr(){
   const dd = String(d.getDate()).padStart(2,"0");
   return `${d.getFullYear()}-${mm}-${dd}`;
 }
+
+routeStatusIfNeeded();
 
 let latestServing = 0;
 let latestTokens = [];
