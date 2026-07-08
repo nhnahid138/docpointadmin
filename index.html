@@ -28,6 +28,7 @@
     color:var(--ink);
     overflow:hidden;
   }
+  body.status-mode{overflow:auto;}
   .bn{font-family:'Noto Sans Bengali','Manrope',sans-serif;}
   button{font-family:inherit; cursor:pointer; border:none;}
   input{font-family:inherit;}
@@ -351,10 +352,10 @@
     #statusNowNumber{font-size:120px;}
     .status-doctor{border-radius:28px; padding:22px; margin:20px 0 0; width:100%;}
     .status-doc-text h2{font-size:20px;}
-    .status-board{height:600px; border-radius:30px;}
+    .status-board{height:auto; border-radius:30px; overflow:visible;}
     .status-board-head{padding:26px 24px;}
     .status-board-head h2{font-size:22px;}
-    #statusQueue{padding:20px;}
+    #statusQueue{padding:20px; overflow:visible;}
     .status-token{gap:16px; padding:18px;}
     .status-token-name{font-size:17px;}
   }
@@ -494,6 +495,7 @@ function clearStatusSubs(){
 }
 
 function setStatusVisibility(isStatus){
+  document.body.classList.toggle("status-mode", isStatus);
   $("statusPage").style.display = isStatus ? "block" : "none";
   $("loginScreen").style.display = isStatus ? "none" : $("loginScreen").style.display;
   $("app").style.display = isStatus ? "none" : $("app").style.display;
