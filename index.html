@@ -773,7 +773,7 @@ function maybeAnnounce(){
   if (!patient) return;
   lastAnnouncedSerial = latestServing;
   const nextPatient = latestTokens.find(t => (t.serialNumber || 0) > latestServing);
-  const text = `Now serving serial number ${patient.serialNumber}, ${patient.patientName}. ${nextPatient ? `Next serving serial number ${nextPatient.serialNumber}.` : ""}`;
+  const text = `Now serving serial number ${patient.serialNumber}, ${patient.patientName}. ${nextPatient ? `Next serving serial number ${nextPatient.serialNumber}, ${nextPatient.patientName}.` : ""}`;
   speak(text, "en");
 }
 
