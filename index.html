@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DocPoint | Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F172A;
+    --ink-soft:#475569;
+    --mist:#64748B;
+    --paper:#F8FAFC;
+    --line:#E2E8F0;
+    --indigo:#4F46E5;
+    --cyan:#06B6D4;
+    --green:#10B981;
+    --amber:#F59E0B;
+    --red:#EF4444;
+    --shadow: 0 10px 30px rgba(15,23,42,.06);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Manrope', 'Noto Sans Bengali', sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    overflow:hidden;
+  }
+  .bn{font-family:'Noto Sans Bengali','Manrope',sans-serif;}
+  button{font-family:inherit; cursor:pointer; border:none;}
+  input{font-family:inherit;}
+
+  /* ---------- LOGIN ---------- */
+  #loginScreen{
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(1100px 600px at 15% -10%, rgba(79,70,229,.18), transparent 60%),
+      radial-gradient(900px 500px at 100% 100%, rgba(6,182,212,.14), transparent 60%),
+      #0B1120;
+    z-index:100;
+  }
+  .login-card{
+    width:400px; max-width:92vw;
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.08);
+    backdrop-filter: blur(20px);
+    border-radius:28px;
+    padding:44px 38px;
+    color:#fff;
+  }
+  .login-mark{
+    width:56px;height:56px;border-radius:16px;
+    background:linear-gradient(135deg,var(--indigo),var(--cyan));
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800; font-size:20px; margin-bottom:22px;
+    box-shadow:0 8px 24px rgba(79,70,229,.4);
+  }
+  .login-card h1{font-size:24px; font-weight:800; letter-spacing:-.5px;}
+  .login-card p{color:#94A3B8; font-size:13px; margin-top:6px; margin-bottom:28px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:11px; font-weight:700; letter-spacing:.6px; color:#94A3B8; margin-bottom:8px; text-transform:uppercase;}
+  .field input{
+    width:100%; padding:13px 15px; border-radius:12px;
+    background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);
+    color:#fff; font-size:14px; outline:none; transition:.2s;
+  }
+  .field input:focus{border-color:var(--indigo); background:rgba(79,70,229,.08);}
+  .login-btn{
+    width:100%; padding:14px; border-radius:12px; margin-top:8px;
+    background:linear-gradient(135deg,var(--indigo),var(--cyan));
+    color:#fff; font-weight:800; font-size:14px; letter-spacing:.4px;
+  }
+  .login-btn:disabled{opacity:.6;}
+  #loginError{
+    margin-top:14px; font-size:12.5px; color:#FCA5A5;
+    background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25);
+    padding:10px 12px; border-radius:10px; display:none;
+  }
+
+  /* ---------- APP SHELL ---------- */
+  #app{display:none; height:100vh; flex-direction:column;}
+  header{
+    height:90px; background:#fff; border-bottom:1px solid var(--line);
+    display:flex; align-items:center; padding:0 24px; gap:18px; flex-shrink:0;
+  }
+  .brand-mark{
+    width:50px; height:50px; border-radius:16px; flex-shrink:0;
+    background:linear-gradient(135deg,var(--indigo),var(--cyan));
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 12px rgba(79,70,229,.3); overflow:hidden;
+  }
+  .brand-mark img{width:100%;height:100%;object-fit:cover;}
+  .brand-mark svg{width:26px;height:26px;}
+  .brand-text h2{font-size:20px; font-weight:900; letter-spacing:.3px;}
+  .brand-text span{font-size:12.5px; color:var(--mist); font-weight:600;}
+  header .spacer{flex:1;}
+
+  .voice-pill{
+    display:flex; align-items:center; gap:8px;
+    padding:8px 16px; border-radius:12px; font-size:11px; font-weight:900; letter-spacing:1px;
+    background:#F1F5F9; color:var(--mist);
+  }
+  .voice-pill.locked{background:rgba(99,102,241,.1); color:#6366F1;}
+  .voice-pill.live{background:rgba(16,185,129,.1); color:var(--green);}
+  .voice-pill svg{width:16px;height:16px;}
+
+  .icon-btn{
+    width:38px;height:38px; border-radius:12px; background:#F1F5F9;
+    display:flex; align-items:center; justify-content:center; color:var(--mist);
+    transition:.15s;
+  }
+  .icon-btn:hover{background:#E2E8F0;}
+  .icon-btn.danger{background:#FEE2E2; color:var(--red);}
+  .icon-btn.danger:hover{background:#FECACA;}
+  .icon-btn svg{width:18px;height:18px;}
+
+  select#doctorSelect{
+    padding:12px 18px; border-radius:15px; background:#F1F5F9; border:1px solid var(--line);
+    font-weight:800; font-size:13.5px; color:var(--ink); outline:none; max-width:220px;
+  }
+
+  main{flex:1; padding:20px; display:grid; grid-template-columns:3fr 5fr 4fr; gap:20px; overflow:hidden;}
+
+  #emptyState{
+    grid-column:1/-1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  }
+  #emptyState svg{width:110px;height:110px; color:rgba(79,70,229,.12);}
+  #emptyState h3{font-size:24px; font-weight:900; color:#1A237E;}
+  #emptyState p{color:#94A3B8; font-size:15px;}
+
+  /* status banner */
+  #statusBanner{
+    display:none; grid-column:1/-1; background:var(--amber); border-radius:16px; margin-bottom:-6px;
+    padding:10px; align-items:center; justify-content:center; gap:10px; color:#fff; font-weight:900; letter-spacing:1.5px; font-size:15px;
+  }
+  #statusBanner svg{width:20px;height:20px;}
+
+  /* Doctor card */
+  .card{background:#fff; border-radius:32px; box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column;}
+  #doctorCard{padding:30px 24px; align-items:center; text-align:center; overflow-y:auto;}
+  .status-chip{
+    display:inline-flex; align-items:center; gap:8px; padding:7px 18px; border-radius:20px;
+    color:#fff; font-weight:900; font-size:12px; letter-spacing:1px; margin-bottom:20px;
+  }
+  .status-chip .dot{width:7px;height:7px;border-radius:50%;background:#fff;}
+  .status-chip.on{background:linear-gradient(135deg,#10B981,#059669); box-shadow:0 4px 12px rgba(16,185,129,.3);}
+  .status-chip.off{background:linear-gradient(135deg,#F59E0B,#D97706); box-shadow:0 4px 12px rgba(245,158,11,.3);}
+  #docPhotoWrap{
+    width:150px; height:150px; border-radius:50%; background:var(--paper); border:8px solid #fff;
+    box-shadow:0 10px 30px rgba(0,0,0,.08); display:flex; align-items:center; justify-content:center;
+    overflow:hidden; margin-bottom:20px; flex-shrink:0;
+  }
+  #docPhotoWrap img{width:100%; height:100%; object-fit:cover;}
+  #docPhotoWrap svg{width:60px; height:60px; color:#CBD5E1;}
+  #doctorCard h2{font-size:22px; font-weight:900; letter-spacing:-.3px; line-height:1.15;}
+  .spec-badge{
+    display:inline-block; margin-top:10px; padding:6px 14px; border-radius:12px;
+    background:#EEF2FF; color:var(--indigo); font-weight:800; font-size:11.5px; letter-spacing:.4px;
+  }
+  #docQual{margin-top:10px; font-size:14px; color:var(--ink-soft); font-weight:600;}
+  #docWork{margin-top:4px; font-size:12.5px; color:var(--mist);}
+  .status-toggle{
+    margin-top:20px; display:flex; gap:8px; width:100%;
+  }
+  .status-toggle button{
+    flex:1; padding:10px 6px; border-radius:12px; font-size:11px; font-weight:800; letter-spacing:.4px;
+    background:#F1F5F9; color:var(--mist); border:1.5px solid transparent; transition:.15s;
+  }
+  .status-toggle button.active{background:rgba(79,70,229,.08); color:var(--indigo); border-color:rgba(79,70,229,.25);}
+  #adWrap{margin-top:20px; width:100%; border-radius:20px; overflow:hidden; box-shadow:0 6px 20px rgba(0,0,0,.08); flex-shrink:0;}
+  #adWrap img{width:100%; display:block; max-height:180px; object-fit:cover;}
+  hr{border:none; border-top:1px solid var(--line); width:100%; margin:18px 0;}
+
+  /* Counter section */
+  #counterCol{display:flex; flex-direction:column; gap:16px; overflow:hidden;}
+  .stat-row{display:flex; gap:16px; flex-shrink:0;}
+  .stat-box{
+    flex:1; padding:18px; border-radius:22px; text-align:center;
+    border:2px solid; 
+  }
+  .stat-box .lbl{font-size:11px; font-weight:900; letter-spacing:1px;}
+  .stat-box .val{font-size:30px; font-weight:900; margin-top:4px;}
+  .stat-box.blue{background:rgba(59,130,246,.08); border-color:rgba(59,130,246,.2); color:#3B82F6;}
+  .stat-box.orange{background:rgba(245,158,11,.08); border-color:rgba(245,158,11,.2); color:var(--amber);}
+
+  #serveBox{flex:1; padding:26px 30px; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:0;}
+  #serveBox.break{background:rgba(245,158,11,.03); border:2px solid rgba(245,158,11,.2);}
+  .now-serving-label{font-size:20px; font-weight:300; letter-spacing:7px; color:#64748B;}
+  .serial-row{display:flex; align-items:center; justify-content:center; gap:30px; width:100%; flex:1; min-height:0;}
+  .round-btn{
+    width:64px; height:64px; border-radius:50%; background:#fff; border:2px solid var(--indigo);
+    box-shadow:0 4px 14px rgba(79,70,229,.12); display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    color:var(--indigo); transition:.12s;
+  }
+  .round-btn:hover{transform:scale(1.06);}
+  .round-btn:active{transform:scale(.95);}
+  .round-btn svg{width:26px;height:26px;}
+  #serialDisplay{
+    flex:1; height:100%; border-radius:28px; background:rgba(59,130,246,.03);
+    display:flex; align-items:center; justify-content:center; min-width:0;
+  }
+  #serialDisplay.break{background:rgba(245,158,11,.06);}
+  #serialNum{font-size:min(16vw,180px); font-weight:900; color:#3B82F6; line-height:1;}
+  #serialNum.break{color:var(--amber);}
+  .footer-note{margin-top:16px; font-size:12px; font-weight:700; letter-spacing:1px; color:#94A3B8;}
+  .footer-note.break{color:var(--amber); font-weight:900;}
+
+  /* Queue */
+  #queueCol{overflow:hidden;}
+  #queueCol h3{padding:26px 26px 14px; font-size:18px; font-weight:900; letter-spacing:1px; color:#2C3E50; flex-shrink:0;}
+  #queueList{flex:1; overflow-y:auto; padding:16px 20px; display:flex; flex-direction:column; gap:10px;}
+  #queueList::-webkit-scrollbar{width:6px;}
+  #queueList::-webkit-scrollbar-thumb{background:#E2E8F0; border-radius:10px;}
+  .qtile{
+    display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:18px;
+    border:1.5px solid #F1F5F9; background:#fff; transition:.3s;
+  }
+  .qtile.done{background:#FAFAFA;}
+  .qtile.current{border-width:2px;}
+  .qtile.current.on{border-color:rgba(16,185,129,.5); background:rgba(16,185,129,.08);}
+  .qtile.current.off{border-color:rgba(245,158,11,.5); background:rgba(245,158,11,.08);}
+  .qavatar{
+    width:38px;height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:13px; flex-shrink:0; color:#3B82F6; background:rgba(59,130,246,.1);
+  }
+  .qavatar.done{background:#E5E7EB; color:#9CA3AF;}
+  .qavatar.current{color:#fff;}
+  .qavatar.current.on{background:var(--green);}
+  .qavatar.current.off{background:var(--amber);}
+  .qname{flex:1; font-weight:700; font-size:14.5px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .qname.done{color:#9CA3AF; text-decoration:line-through;}
+  .qtag{padding:4px 11px; border-radius:11px; color:#fff; font-size:9.5px; font-weight:800; letter-spacing:.5px; flex-shrink:0;}
+  .qtag.on{background:var(--green);}
+  .qtag.off{background:var(--amber);}
+  #queueList .empty{text-align:center; color:#94A3B8; padding:40px 0; font-size:14px;}
+
+  /* Audio unlock overlay */
+  #audioOverlay{
+    position:absolute; inset:0; background:rgba(15,23,42,.95); display:none;
+    align-items:center; justify-content:center; z-index:40; border-radius:0;
+  }
+  .overlay-inner{text-align:center; max-width:420px; padding:20px;}
+  .overlay-icon{
+    width:96px;height:96px; border-radius:50%; background:rgba(255,255,255,.05);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 26px;
+  }
+  .overlay-icon svg{width:48px;height:48px; color:#6366F1;}
+  .overlay-inner h2{color:#fff; font-size:26px; font-weight:900; letter-spacing:1.5px;}
+  .overlay-inner p{color:rgba(255,255,255,.55); font-size:14.5px; margin-top:12px; font-weight:500;}
+  #activateBtn{
+    margin-top:34px; padding:18px 40px; border-radius:18px; background:#6366F1; color:#fff;
+    font-weight:900; font-size:17px; display:inline-flex; align-items:center; gap:10px; box-shadow:0 10px 30px rgba(99,102,241,.3);
+  }
+  #activateBtn svg{width:24px;height:24px;}
+  .overlay-hint{margin-top:22px; font-size:11.5px; color:rgba(255,255,255,.25);}
+
+  #mainStage{position:relative; grid-column:2/3; display:flex; min-height:0;}
+
+  @media (max-width: 1100px){
+    main{grid-template-columns:1fr; overflow-y:auto;}
+    #mainStage{min-height:520px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== LOGIN ===================== -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-mark">DP</div>
+    <h1>DocPoint Admin</h1>
+    <p>আপনার হাসপাতালের কিউ ড্যাশবোর্ডে সাইন ইন করুন</p>
+    <form id="loginForm">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="loginEmail" required autocomplete="username" placeholder="admin@hospital.com">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="loginPassword" required autocomplete="current-password" placeholder="••••••••">
+      </div>
+      <button type="submit" class="login-btn" id="loginBtn">সাইন ইন করুন</button>
+      <div id="loginError"></div>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== APP ===================== -->
+<div id="app">
+  <header>
+    <div class="brand-mark" id="brandMark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v2H7a3 3 0 0 0-3 3v2a3 3 0 0 0 3 3h2v2a3 3 0 0 0 3 3 3 3 0 0 0 3-3v-2h2a3 3 0 0 0 3-3v-2a3 3 0 0 0-3-3h-2V5a3 3 0 0 0-3-3z"/></svg>
+    </div>
+    <div class="brand-text">
+      <h2 id="hospitalName">HOSPITAL</h2>
+      <span id="hospitalAddress">—</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="voice-pill" id="voicePill">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 5 6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+      <span id="voicePillText">VOICE OFF</span>
+    </div>
+    <button class="icon-btn" id="testSoundBtn" style="display:none;" title="Test sound">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4V8z" fill="currentColor" stroke="none"/></svg>
+    </button>
+    <select id="doctorSelect"><option value="">ডাক্তার নির্বাচন করুন</option></select>
+    <button class="icon-btn danger" id="logoutBtn" title="Logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+    </button>
+  </header>
+
+  <main id="mainGrid">
+    <div id="emptyState">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      <h3>সিস্টেম প্রস্তুত</h3>
+      <p>উপরের মেনু থেকে একজন ডাক্তার নির্বাচন করুন</p>
+    </div>
+  </main>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query, where,
+  increment, updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDV6Yf3P2pm56sq7v0QI8q3umAqkYn29eA",
+  authDomain: "docpoint-74e2e.firebaseapp.com",
+  projectId: "docpoint-74e2e",
+  storageBucket: "docpoint-74e2e.firebasestorage.app",
+  messagingSenderId: "1010990057321",
+  appId: "1:1010990057321:web:8f22ee273d8f87e8b19ff8",
+  measurementId: "G-1T3XW793RY"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = (id) => document.getElementById(id);
+
+/* ---------------- LOGIN ---------------- */
+$("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = $("loginEmail").value.trim();
+  const pass = $("loginPassword").value;
+  const btn = $("loginBtn");
+  const err = $("loginError");
+  err.style.display = "none";
+  btn.disabled = true;
+  btn.textContent = "সাইন ইন হচ্ছে...";
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch (e2) {
+    err.textContent = "লগইন ব্যর্থ হয়েছে — ইমেইল বা পাসওয়ার্ড ভুল আছে।";
+    err.style.display = "block";
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "সাইন ইন করুন";
+  }
+});
+
+$("logoutBtn").addEventListener("click", () => signOut(auth));
+
+let adminUid = null;
+let unsubscribers = [];
+function clearSubs(){ unsubscribers.forEach(u => u()); unsubscribers = []; }
+
+onAuthStateChanged(auth, (user) => {
+  clearSubs();
+  if (user) {
+    adminUid = user.uid;
+    $("loginScreen").style.display = "none";
+    $("app").style.display = "flex";
+    loadHospitalInfo();
+    loadDoctors();
+  } else {
+    adminUid = null;
+    $("app").style.display = "none";
+    $("loginScreen").style.display = "flex";
+    $("loginPassword").value = "";
+  }
+});
+
+/* ---------------- HOSPITAL INFO ---------------- */
+async function loadHospitalInfo(){
+  try {
+    const snap = await getDoc(doc(db, "users", adminUid));
+    const info = snap.exists() ? (snap.data().hospitalInfo || {}) : {};
+    $("hospitalName").textContent = (info.name || "HOSPITAL").toUpperCase();
+    $("hospitalAddress").textContent = info.address || "—";
+    if (info.logoUrl) {
+      $("brandMark").innerHTML = `<img src="${info.logoUrl}" alt="logo">`;
+    }
+  } catch(e){ console.error(e); }
+}
+
+/* ---------------- DOCTORS ---------------- */
+let doctorsCache = {};
+function loadDoctors(){
+  const ref = collection(db, "users", adminUid, "doctors");
+  const unsub = onSnapshot(ref, (snap) => {
+    const select = $("doctorSelect");
+    const prevVal = select.value;
+    select.innerHTML = '<option value="">ডাক্তার নির্বাচন করুন</option>';
+    doctorsCache = {};
+    snap.forEach(d => {
+      doctorsCache[d.id] = { id: d.id, ...d.data() };
+      const opt = document.createElement("option");
+      opt.value = d.id;
+      opt.textContent = d.data().name || "Unnamed";
+      select.appendChild(opt);
+    });
+    if (prevVal && doctorsCache[prevVal]) {
+      select.value = prevVal;
+    } else if (currentDoctorId && doctorsCache[currentDoctorId]) {
+      select.value = currentDoctorId;
+      renderDoctorStatics(doctorsCache[currentDoctorId]);
+    }
+  });
+  unsubscribers.push(unsub);
+}
+
+let currentDoctorId = null;
+let isAudioUnlocked = false;
+let lastAnnouncedSerial = null;
+
+$("doctorSelect").addEventListener("change", (e) => {
+  selectDoctor(e.target.value);
+});
+
+function selectDoctor(id){
+  clearDoctorSubs();
+  currentDoctorId = id || null;
+  lastAnnouncedSerial = null;
+  if (!currentDoctorId) {
+    renderEmpty();
+    return;
+  }
+  renderShell();
+  const doc0 = doctorsCache[currentDoctorId];
+  if (doc0) renderDoctorStatics(doc0);
+  listenDoctor(currentDoctorId);
+}
+
+let doctorUnsubs = [];
+function clearDoctorSubs(){ doctorUnsubs.forEach(u => u()); doctorUnsubs = []; }
+
+function renderEmpty(){
+  $("mainGrid").innerHTML = `
+    <div id="emptyState">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      <h3>সিস্টেম প্রস্তুত</h3>
+      <p>উপরের মেনু থেকে একজন ডাক্তার নির্বাচন করুন</p>
+    </div>`;
+  $("testSoundBtn").style.display = "none";
+}
+
+/* ---------------- MAIN SHELL ---------------- */
+function renderShell(){
+  $("mainGrid").innerHTML = `
+    <div id="statusBanner">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      <span id="statusBannerText">DOCTOR STATUS — PLEASE WAIT</span>
+    </div>
+
+    <div class="card" id="doctorCard">
+      <div class="status-chip" id="statusChip"><span class="dot"></span><span id="statusChipText">ON DUTY</span></div>
+      <div id="docPhotoWrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg></div>
+      <h2 id="docName">—</h2>
+      <div class="spec-badge" id="docSpec">—</div>
+      <div id="docQual"></div>
+      <div id="docWork"></div>
+      <div class="status-toggle">
+        <button data-status="ON DUTY" id="btnOnDuty">ON DUTY</button>
+        <button data-status="LUNCH BREAK" id="btnBreak">BREAK</button>
+      </div>
+      <hr>
+      <div id="adWrap" style="display:none;"><img id="adImg" src=""></div>
+    </div>
+
+    <div id="mainStage">
+      <div id="counterCol" style="width:100%;">
+        <div class="stat-row">
+          <div class="stat-box blue"><div class="lbl">TOTAL ISSUED</div><div class="val" id="statTotal">0</div></div>
+          <div class="stat-box orange"><div class="lbl">REMAINING</div><div class="val" id="statRemaining">0</div></div>
+        </div>
+        <div class="card" id="serveBox">
+          <div class="now-serving-label">NOW SERVING</div>
+          <div class="serial-row">
+            <button class="round-btn" id="decBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12h14"/></svg>
+            </button>
+            <div id="serialDisplay"><span id="serialNum">0</span></div>
+            <button class="round-btn" id="incBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </div>
+          <div class="footer-note" id="footerNote">USE BUTTONS TO UPDATE</div>
+        </div>
+      </div>
+      <div id="audioOverlay">
+        <div class="overlay-inner">
+          <div class="overlay-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          </div>
+          <h2>LIVE AUDIO MONITORING</h2>
+          <p>ভয়েস অ্যানাউন্সমেন্ট চালু করতে ব্রাউজারের অনুমতি প্রয়োজন।</p>
+          <button id="activateBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/></svg>
+            ACTIVATE SOUND NOW
+          </button>
+          <div class="overlay-hint">শব্দ কাজ না করলে Site Settings &gt; Sound → Allow করুন</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="queueCol">
+      <h3>PATIENT QUEUE</h3>
+      <div id="queueList"></div>
+    </div>
+  `;
+
+  $("decBtn").addEventListener("click", () => bumpSerial(-1));
+  $("incBtn").addEventListener("click", () => bumpSerial(1));
+  $("activateBtn").addEventListener("click", unlockAudio);
+  $("btnOnDuty").addEventListener("click", () => setDoctorStatus("ON DUTY"));
+  $("btnBreak").addEventListener("click", () => setDoctorStatus("LUNCH BREAK"));
+}
+
+function renderDoctorStatics(d){
+  $("docName").textContent = (d.name || "").toUpperCase();
+  $("docSpec").textContent = (d.specialty || "").toUpperCase();
+  $("docQual").textContent = d.qualification || "";
+  $("docWork").textContent = d.workedAt || "";
+  if (d.imageUrl) {
+    $("docPhotoWrap").innerHTML = `<img src="${d.imageUrl}" alt="${d.name || ''}">`;
+  }
+  if (d.showAd && d.adImageUrl) {
+    $("adWrap").style.display = "block";
+    $("adImg").src = d.adImageUrl;
+  } else {
+    $("adWrap").style.display = "none";
+  }
+}
+
+async function setDoctorStatus(status){
+  if (!currentDoctorId) return;
+  try {
+    await updateDoc(doc(db, "users", adminUid, "doctors", currentDoctorId), { status });
+  } catch(e){ console.error(e); }
+}
+
+/* ---------------- REALTIME LISTENERS FOR SELECTED DOCTOR ---------------- */
+function todayStr(){
+  const d = new Date();
+  const mm = String(d.getMonth()+1).padStart(2,"0");
+  const dd = String(d.getDate()).padStart(2,"0");
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
+let latestServing = 0;
+let latestTokens = [];
+let latestIsAudioEnabled = false;
+let latestVoiceLang = "bn";
+let latestStatus = "ON DUTY";
+
+function listenDoctor(docId){
+  // doctor doc itself (status, isAudioEnabled, voiceLanguage)
+  const uDoc = onSnapshot(doc(db, "users", adminUid, "doctors", docId), (snap) => {
+    if (!snap.exists()) return;
+    const d = { id: docId, ...snap.data() };
+    doctorsCache[docId] = d;
+    renderDoctorStatics(d);
+    latestIsAudioEnabled = d.isAudioEnabled === true;
+    latestVoiceLang = d.voiceLanguage || "bn";
+    latestStatus = d.status || "ON DUTY";
+    applyStatusUI(latestStatus);
+    applyAudioUI();
+    maybeAnnounce();
+  });
+  doctorUnsubs.push(uDoc);
+
+  // now_serving/info
+  const uServe = onSnapshot(doc(db, "users", adminUid, "doctors", docId, "now_serving", "info"), (snap) => {
+    latestServing = snap.exists() ? (snap.data().serving_count || 0) : 0;
+    $("serialNum") && ($("serialNum").textContent = latestServing);
+    updateRemaining();
+    renderQueue();
+    maybeAnnounce();
+  });
+  doctorUnsubs.push(uServe);
+
+  // current_token/token (total issued today)
+  const uCount = onSnapshot(doc(db, "users", adminUid, "doctors", docId, "current_token", "token"), (snap) => {
+    const data = snap.exists() ? snap.data() : {};
+    const count = (data.last_date === todayStr()) ? (data.token_count || 0) : 0;
+    $("statTotal") && ($("statTotal").textContent = count);
+    updateRemaining(count);
+  });
+  doctorUnsubs.push(uCount);
+
+  // today's tokens for this doctor
+  const tq = query(
+    collection(db, "users", adminUid, "tokens"),
+    where("doctorId", "==", docId),
+    where("dateString", "==", todayStr())
+  );
+  const uTokens = onSnapshot(tq, (snap) => {
+    const list = [];
+    snap.forEach(d => list.push({ id: d.id, ...d.data() }));
+    list.sort((a,b) => (a.serialNumber||0) - (b.serialNumber||0));
+    latestTokens = list;
+    renderQueue();
+    maybeAnnounce();
+  });
+  doctorUnsubs.push(uTokens);
+}
+
+function updateRemaining(totalOverride){
+  const totalEl = $("statTotal");
+  const total = totalOverride !== undefined ? totalOverride : parseInt(totalEl ? totalEl.textContent : "0", 10) || 0;
+  const remaining = Math.max(total - latestServing, 0);
+  if ($("statRemaining")) $("statRemaining").textContent = remaining;
+}
+
+function applyStatusUI(status){
+  const isBreak = status !== "ON DUTY";
+  const banner = $("statusBanner");
+  const bannerText = $("statusBannerText");
+  if (banner) {
+    banner.style.display = isBreak ? "flex" : "none";
+    if (bannerText) bannerText.textContent = `DOCTOR STATUS: ${status} — PLEASE WAIT`;
+  }
+  const chip = $("statusChip");
+  const chipText = $("statusChipText");
+  if (chip) {
+    chip.className = "status-chip " + (isBreak ? "off" : "on");
+    if (chipText) chipText.textContent = status;
+  }
+  const serveBox = $("serveBox");
+  const serialDisplay = $("serialDisplay");
+  const serialNum = $("serialNum");
+  const footer = $("footerNote");
+  if (serveBox) serveBox.className = "card" + (isBreak ? " break" : "");
+  if (serialDisplay) serialDisplay.className = isBreak ? "break" : "";
+  if (serialNum) serialNum.className = isBreak ? "break" : "";
+  if (footer) {
+    footer.textContent = isBreak ? "DOCTOR ON BREAK" : "USE BUTTONS TO UPDATE";
+    footer.className = "footer-note" + (isBreak ? " break" : "");
+  }
+  const onBtn = $("btnOnDuty"), brBtn = $("btnBreak");
+  if (onBtn && brBtn) {
+    onBtn.classList.toggle("active", !isBreak);
+    brBtn.classList.toggle("active", isBreak);
+  }
+}
+
+function renderQueue(){
+  const list = $("queueList");
+  if (!list) return;
+  if (latestTokens.length === 0) {
+    list.innerHTML = `<div class="empty">কোনো রোগী নেই</div>`;
+    return;
+  }
+  const isBreak = latestStatus !== "ON DUTY";
+  list.innerHTML = latestTokens.map(t => {
+    const isCurrent = t.serialNumber === latestServing;
+    const isDone = t.serialNumber < latestServing;
+    const stateClass = isCurrent ? "current" : (isDone ? "done" : "");
+    const onoff = isBreak ? "off" : "on";
+    let avatarClass = "qavatar";
+    if (isCurrent) avatarClass += ` current ${onoff}`;
+    else if (isDone) avatarClass += " done";
+    let tileClass = "qtile " + stateClass;
+    if (isCurrent) tileClass += ` ${onoff}`;
+    let trailing = "";
+    if (isCurrent) {
+      trailing = `<span class="qtag ${onoff}">${isBreak ? "ON BREAK" : "SERVING"}</span>`;
+    } else if (isDone) {
+      trailing = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>`;
+    } else {
+      trailing = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`;
+    }
+    const name = (t.patientName || "—").toUpperCase();
+    return `<div class="${tileClass}">
+      <div class="${avatarClass}">${t.serialNumber}</div>
+      <div class="qname bn ${isDone ? 'done' : ''}">${name}</div>
+      ${trailing}
+    </div>`;
+  }).join("");
+
+  const currentEl = list.querySelector(".qtile.current");
+  if (currentEl) currentEl.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+/* ---------------- SERIAL CONTROLS ---------------- */
+async function bumpSerial(delta){
+  if (!currentDoctorId) return;
+  if (delta < 0 && latestServing <= 0) return;
+  const ref = doc(db, "users", adminUid, "doctors", currentDoctorId, "now_serving", "info");
+  try {
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+      await setDoc(ref, { serving_count: Math.max(delta, 0) });
+    } else {
+      await updateDoc(ref, { serving_count: increment(delta) });
+    }
+  } catch(e){ console.error(e); }
+}
+
+/* ---------------- VOICE ---------------- */
+function applyAudioUI(){
+  const pill = $("voicePill");
+  const pillText = $("voicePillText");
+  const testBtn = $("testSoundBtn");
+  const overlay = $("audioOverlay");
+  if (!pill) return;
+  if (!latestIsAudioEnabled) {
+    pill.className = "voice-pill";
+    pillText.textContent = "VOICE OFF";
+    testBtn.style.display = "none";
+    if (overlay) overlay.style.display = "none";
+    return;
+  }
+  if (isAudioUnlocked) {
+    pill.className = "voice-pill live";
+    pillText.textContent = "VOICE LIVE";
+    testBtn.style.display = "flex";
+    if (overlay) overlay.style.display = "none";
+  } else {
+    pill.className = "voice-pill locked";
+    pillText.textContent = "VOICE LOCKED";
+    testBtn.style.display = "none";
+    if (overlay) overlay.style.display = "flex";
+  }
+}
+
+function speak(text, lang){
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const msg = new SpeechSynthesisUtterance(text);
+  msg.lang = lang === "bn" ? "bn-BD" : "en-US";
+  msg.rate = 0.9;
+  msg.pitch = 1.0;
+  window.speechSynthesis.speak(msg);
+}
+
+function unlockAudio(){
+  if (isAudioUnlocked) return;
+  speak(latestVoiceLang === "bn" ? "ভয়েস সিস্টেম প্রস্তুত।" : "Voice system is ready.", latestVoiceLang);
+  isAudioUnlocked = true;
+  applyAudioUI();
+}
+
+$("testSoundBtn").addEventListener("click", () => {
+  if (!isAudioUnlocked) { unlockAudio(); return; }
+  speak(latestVoiceLang === "bn" ? "সিস্টেম সঠিকভাবে কাজ করছে।" : "The system is functioning correctly.", latestVoiceLang);
+});
+
+function maybeAnnounce(){
+  if (!latestIsAudioEnabled || !isAudioUnlocked) return;
+  if (lastAnnouncedSerial === latestServing) return;
+  const patient = latestTokens.find(t => t.serialNumber === latestServing);
+  if (!patient) return;
+  lastAnnouncedSerial = latestServing;
+  const text = latestVoiceLang === "bn"
+    ? `এখন সিরিয়াল নাম্বার ${patient.serialNumber}, ${patient.patientName}, দয়া করে ভেতরে আসুন।`
+    : `Now serving patient number ${patient.serialNumber}, ${patient.patientName}. Please come in.`;
+  speak(text, latestVoiceLang);
+}
+
+window.addEventListener("beforeunload", () => {
+  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+});
+</script>
+</body>
+</html>
