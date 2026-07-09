@@ -488,7 +488,7 @@ function getStatusParams(){
   const visitDate = params.get("v") || "";
   if (!userId || !doctorId) return { error: "Missing user_id or doctor_id in QR URL" };
   if (!/^\d{8}$/.test(visitDate)) return { error: "Missing or invalid date in QR URL" };
-  if (visitDate !== todayStatusKey()) return { error: "This QR link is only valid for today's date" };
+  if (visitDate !== todayStatusKey()) return { error: "Please take an appointment first" };
   return { userId, doctorId, visitDate };
 }
 
@@ -603,14 +603,20 @@ function renderStatusPage(){
   updateStatusClock();
 }
 
-function openStatusRoute(userId, doctorId){
+function openStatusRoute(userId, doctorId, visitDate){
   clearSubs();
   clearDoctorSubs();
   clearStatusSubs();
   setStatusVisibility(true);
+  if (!/^\d{8}$/.test(visitDate) || visitDate !== todayStatusKey()) {
+    statusState = { error: "Please take an appointment first" };
+    renderStatusPage();
+    return;
+  }
   statusState = {
     userId,
     doctorId,
+    visitDate,
     hospital: {},
     doctor: {},
     serving: 0,
@@ -685,7 +691,7 @@ function routeStatusIfNeeded(){
     $("statusPage").innerHTML = `<div class="status-error">${escapeHtml(params.error)}</div>`;
     return true;
   }
-  openStatusRoute(params.userId, params.doctorId);
+  openStatusRoute(params.userId, params.doctorId, params.visitDate);
   return true;
 }
 
