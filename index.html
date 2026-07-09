@@ -478,6 +478,31 @@ function todayStatusKey(){
   return todayStr().replace(/-/g, "");
 }
 
+function isValidStatusVisitDate(visitDate){
+  return /^\d{8}$/.test(visitDate || "") && visitDate === todayStatusKey();
+}
+
+function showStatusRouteError(message){
+  clearSubs();
+  clearDoctorSubs();
+  clearStatusSubs();
+  setStatusVisibility(true);
+  statusState = {
+    userId: "",
+    doctorId: "",
+    hospital: {},
+    doctor: {},
+    serving: 0,
+    tokens: [],
+    error: message,
+    userLoaded: false,
+    doctorLoaded: false,
+    servingLoaded: false,
+    tokensLoaded: false
+  };
+  renderStatusPage();
+}
+
 function getStatusParams(){
   const hash = window.location.hash || "";
   if (!hash.startsWith("#/status")) return null;
@@ -487,8 +512,7 @@ function getStatusParams(){
   const doctorId = params.get("doctor_id") || params.get("doctorId") || "";
   const visitDate = params.get("v") || "";
   if (!userId || !doctorId) return { error: "Missing user_id or doctor_id in QR URL" };
-  if (!/^\d{8}$/.test(visitDate)) return { error: "Missing or invalid date in QR URL" };
-  if (visitDate !== todayStatusKey()) return { error: "Please take an appointment first" };
+  if (!isValidStatusVisitDate(visitDate)) return { error: "Please take an appointment first" };
   return { userId, doctorId, visitDate };
 }
 
@@ -608,9 +632,8 @@ function openStatusRoute(userId, doctorId, visitDate){
   clearDoctorSubs();
   clearStatusSubs();
   setStatusVisibility(true);
-  if (!/^\d{8}$/.test(visitDate) || visitDate !== todayStatusKey()) {
-    statusState = { error: "Please take an appointment first" };
-    renderStatusPage();
+  if (!isValidStatusVisitDate(visitDate)) {
+    showStatusRouteError("Please take an appointment first");
     return;
   }
   statusState = {
@@ -687,8 +710,7 @@ function routeStatusIfNeeded(){
   const params = getStatusParams();
   if (!params) return false;
   if (params.error) {
-    setStatusVisibility(true);
-    $("statusPage").innerHTML = `<div class="status-error">${escapeHtml(params.error)}</div>`;
+    showStatusRouteError(params.error);
     return true;
   }
   openStatusRoute(params.userId, params.doctorId, params.visitDate);
