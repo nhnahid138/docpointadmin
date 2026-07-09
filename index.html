@@ -474,12 +474,21 @@ function escapeHtml(value){
   }[ch]));
 }
 
+const STATUS_NO_APPOINTMENT_MESSAGE = "No appointment found";
+
 function todayStatusKey(){
-  return todayStr().replace(/-/g, "");
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}${mm}${dd}`;
+}
+
+function normalizeStatusVisitDate(visitDate){
+  return String(visitDate || "").replace(/\D/g, "");
 }
 
 function isValidStatusVisitDate(visitDate){
-  return /^\d{8}$/.test(visitDate || "") && visitDate === todayStatusKey();
+  return normalizeStatusVisitDate(visitDate) === todayStatusKey();
 }
 
 function showStatusRouteError(message){
@@ -512,8 +521,8 @@ function getStatusParams(){
   const doctorId = params.get("doctor_id") || params.get("doctorId") || "";
   const visitDate = params.get("v") || "";
   if (!userId || !doctorId) return { error: "Missing user_id or doctor_id in QR URL" };
-  if (!isValidStatusVisitDate(visitDate)) return { error: "Please take an appointment first" };
-  return { userId, doctorId, visitDate };
+  if (!isValidStatusVisitDate(visitDate)) return { error: STATUS_NO_APPOINTMENT_MESSAGE };
+  return { userId, doctorId, visitDate: normalizeStatusVisitDate(visitDate) };
 }
 
 function clearStatusSubs(){
@@ -633,7 +642,7 @@ function openStatusRoute(userId, doctorId, visitDate){
   clearStatusSubs();
   setStatusVisibility(true);
   if (!isValidStatusVisitDate(visitDate)) {
-    showStatusRouteError("Please take an appointment first");
+    showStatusRouteError(STATUS_NO_APPOINTMENT_MESSAGE);
     return;
   }
   statusState = {
