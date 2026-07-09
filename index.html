@@ -474,6 +474,10 @@ function escapeHtml(value){
   }[ch]));
 }
 
+function todayStatusKey(){
+  return todayStr().replace(/-/g, "");
+}
+
 function getStatusParams(){
   const hash = window.location.hash || "";
   if (!hash.startsWith("#/status")) return null;
@@ -481,8 +485,11 @@ function getStatusParams(){
   const params = new URLSearchParams(queryText);
   const userId = params.get("user_id") || params.get("adminId") || "";
   const doctorId = params.get("doctor_id") || params.get("doctorId") || "";
+  const visitDate = params.get("v") || "";
   if (!userId || !doctorId) return { error: "Missing user_id or doctor_id in QR URL" };
-  return { userId, doctorId };
+  if (!/^\d{8}$/.test(visitDate)) return { error: "Missing or invalid date in QR URL" };
+  if (visitDate !== todayStatusKey()) return { error: "This QR link is only valid for today's date" };
+  return { userId, doctorId, visitDate };
 }
 
 function clearStatusSubs(){
