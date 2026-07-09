@@ -933,6 +933,17 @@ let latestTokens = [];
 let latestIsAudioEnabled = false;
 let latestVoiceLang = "bn";
 let latestStatus = "ON DUTY";
+let speechVoices = [];
+
+function refreshSpeechVoices(){
+  if (!("speechSynthesis" in window)) return;
+  speechVoices = window.speechSynthesis.getVoices();
+}
+
+if ("speechSynthesis" in window) {
+  refreshSpeechVoices();
+  window.speechSynthesis.onvoiceschanged = refreshSpeechVoices;
+}
 
 function listenDoctor(docId){
   // doctor doc itself (status, isAudioEnabled, voiceLanguage)
@@ -1105,13 +1116,44 @@ function applyAudioUI(){
   }
 }
 
+function pickNaturalFemaleVoice(lang){
+  refreshSpeechVoices();
+  if (!speechVoices.length) return null;
+  const targetLang = lang === "bn" ? "bn" : "en";
+  const femaleHints = [
+    "female", "woman", "zira", "samantha", "victoria", "karen", "moira",
+    "tessa", "veena", "serena", "susan", "joanna", "salli", "aria", "jenny",
+    "natasha", "google us english", "google uk english female"
+  ];
+  const naturalHints = ["google", "microsoft", "premium", "enhanced", "natural", "neural"];
+
+  return speechVoices
+    .filter((voice) => (voice.lang || "").toLowerCase().startsWith(targetLang))
+    .map((voice) => {
+      const name = (voice.name || "").toLowerCase();
+      let score = 0;
+      if (femaleHints.some((hint) => name.includes(hint))) score += 5;
+      if (naturalHints.some((hint) => name.includes(hint))) score += 3;
+      if ((voice.lang || "").toLowerCase() === "en-us") score += 2;
+      if (!voice.localService) score += 1;
+      return { voice, score };
+    })
+    .sort((a, b) => b.score - a.score)[0]?.voice || null;
+}
+
 function speak(text, lang){
   if (!("speechSynthesis" in window)) return;
   window.speechSynthesis.cancel();
   const msg = new SpeechSynthesisUtterance(text);
   msg.lang = lang === "bn" ? "bn-BD" : "en-US";
-  msg.rate = 0.9;
-  msg.pitch = 1.0;
+  const selectedVoice = pickNaturalFemaleVoice(lang);
+  if (selectedVoice) {
+    msg.voice = selectedVoice;
+    msg.lang = selectedVoice.lang || msg.lang;
+  }
+  msg.rate = 0.82;
+  msg.pitch = 1.08;
+  msg.volume = 1;
   window.speechSynthesis.speak(msg);
 }
 
@@ -1134,7 +1176,9 @@ function maybeAnnounce(){
   if (!patient) return;
   lastAnnouncedSerial = latestServing;
   const nextPatient = latestTokens.find(t => (t.serialNumber || 0) > latestServing);
-  const text = `Now serving serial number ${patient.serialNumber}, ${patient.patientName}. ${nextPatient ? `Next serving serial number ${nextPatient.serialNumber}, ${nextPatient.patientName}.` : ""}`;
+  const patientName = patient.patientName || "Patient";
+  const nextPatientName = nextPatient?.patientName || "Patient";
+  const text = `Now serving, serial number ${patient.serialNumber}. ${patientName}, please proceed. ${nextPatient ? `Next in queue, serial number ${nextPatient.serialNumber}. ${nextPatientName}.` : ""}`;
   speak(text, "en");
 }
 
