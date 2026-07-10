@@ -201,11 +201,18 @@
   .round-btn svg{width:26px;height:26px;}
   #serialDisplay{
     flex:1; height:100%; border-radius:28px; background:rgba(59,130,246,.03);
-    display:flex; align-items:center; justify-content:center; min-width:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; min-width:0; padding:20px;
   }
   #serialDisplay.break{background:rgba(245,158,11,.06);}
-  #serialNum{font-size:min(16vw,180px); font-weight:900; color:#3B82F6; line-height:1;}
+  #serialNum{font-size:min(18vw,220px); font-weight:900; color:#3B82F6; line-height:.9;}
   #serialNum.break{color:var(--amber);}
+  #currentPatientName{
+    margin-top:18px; max-width:100%; min-height:28px; color:var(--ink);
+    font-size:clamp(20px,2.4vw,34px); font-weight:900; line-height:1.1;
+    text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  #currentPatientName.empty{color:#94A3B8; font-size:clamp(14px,1.4vw,18px); font-weight:800; letter-spacing:1px;}
+  #currentPatientName.break{color:var(--amber);}
   .footer-note{margin-top:16px; font-size:12px; font-weight:700; letter-spacing:1px; color:#94A3B8;}
   .footer-note.break{color:var(--amber); font-weight:900;}
 
@@ -936,6 +943,8 @@ function selectDoctor(id){
   clearDoctorSubs();
   currentDoctorId = id || null;
   lastAnnouncedSerial = null;
+  latestServing = 0;
+  latestTokens = [];
   if (!currentDoctorId) {
     renderEmpty();
     return;
@@ -994,7 +1003,10 @@ function renderShell(){
             <button class="round-btn" id="decBtn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12h14"/></svg>
             </button>
-            <div id="serialDisplay"><span id="serialNum">0</span></div>
+            <div id="serialDisplay">
+              <span id="serialNum">0</span>
+              <div id="currentPatientName" class="empty">NO PATIENT SELECTED</div>
+            </div>
             <button class="round-btn" id="incBtn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg>
             </button>
@@ -1101,6 +1113,7 @@ function listenDoctor(docId){
   const uServe = onSnapshot(doc(db, "users", adminUid, "doctors", docId, "now_serving", "info"), (snap) => {
     latestServing = snap.exists() ? (snap.data().serving_count || 0) : 0;
     $("serialNum") && ($("serialNum").textContent = latestServing);
+    updateCurrentPatientName();
     updateRemaining();
     renderQueue();
     maybeAnnounce();
@@ -1127,6 +1140,7 @@ function listenDoctor(docId){
     snap.forEach(d => list.push({ id: d.id, ...d.data() }));
     list.sort((a,b) => (a.serialNumber||0) - (b.serialNumber||0));
     latestTokens = list;
+    updateCurrentPatientName();
     renderQueue();
     maybeAnnounce();
   });
@@ -1138,6 +1152,16 @@ function updateRemaining(totalOverride){
   const total = totalOverride !== undefined ? totalOverride : parseInt(totalEl ? totalEl.textContent : "0", 10) || 0;
   const remaining = Math.max(total - latestServing, 0);
   if ($("statRemaining")) $("statRemaining").textContent = remaining;
+}
+
+function updateCurrentPatientName(){
+  const el = $("currentPatientName");
+  if (!el) return;
+  const currentPatient = latestTokens.find((t) => t.serialNumber === latestServing);
+  const name = currentPatient?.patientName || "";
+  const isBreak = latestStatus !== "ON DUTY";
+  el.textContent = name ? name.toUpperCase() : "NO PATIENT SELECTED";
+  el.className = (name ? "" : "empty") + (isBreak ? " break" : "");
 }
 
 function applyStatusUI(status){
@@ -1165,6 +1189,7 @@ function applyStatusUI(status){
     footer.textContent = isBreak ? "DOCTOR ON BREAK" : "USE BUTTONS TO UPDATE";
     footer.className = "footer-note" + (isBreak ? " break" : "");
   }
+  updateCurrentPatientName();
   const onBtn = $("btnOnDuty"), brBtn = $("btnBreak");
   if (onBtn && brBtn) {
     onBtn.classList.toggle("active", !isBreak);
