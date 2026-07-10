@@ -207,11 +207,18 @@
   #serialNum{font-size:min(18vw,220px); font-weight:900; color:#3B82F6; line-height:.9;}
   #serialNum.break{color:var(--amber);}
   #currentPatientName{
-    margin-top:18px; max-width:100%; min-height:28px; color:var(--ink);
-    font-size:clamp(20px,2.4vw,34px); font-weight:900; line-height:1.1;
+    margin-top:20px; max-width:min(92%,620px); min-height:44px; color:#1D4ED8;
+    font-size:clamp(20px,2.2vw,32px); font-weight:900; line-height:1.1;
     text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    padding:10px 22px; border-radius:999px;
+    background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(6,182,212,.12));
+    border:1px solid rgba(59,130,246,.22);
+    box-shadow:0 10px 28px rgba(59,130,246,.12);
   }
-  #currentPatientName.empty{color:#94A3B8; font-size:clamp(14px,1.4vw,18px); font-weight:800; letter-spacing:1px;}
+  #currentPatientName.empty{
+    color:#94A3B8; font-size:clamp(13px,1.3vw,16px); font-weight:900; letter-spacing:1.6px;
+    background:rgba(148,163,184,.1); border-color:rgba(148,163,184,.18); box-shadow:none;
+  }
   #currentPatientName.break{color:var(--amber);}
   .footer-note{margin-top:16px; font-size:12px; font-weight:700; letter-spacing:1px; color:#94A3B8;}
   .footer-note.break{color:var(--amber); font-weight:900;}
@@ -303,6 +310,18 @@
   body.dark-mode:not(.status-mode) .qtile.current.on .qavatar{
     background:#10B981;
     box-shadow:0 0 22px rgba(16,185,129,.65);
+  }
+  body.dark-mode:not(.status-mode) #currentPatientName{
+    color:#BFDBFE;
+    background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(6,182,212,.14));
+    border-color:rgba(96,165,250,.34);
+    box-shadow:0 0 26px rgba(59,130,246,.18);
+  }
+  body.dark-mode:not(.status-mode) #currentPatientName.empty{
+    color:#64748B;
+    background:rgba(148,163,184,.08);
+    border-color:rgba(148,163,184,.12);
+    box-shadow:none;
   }
   body.dark-mode:not(.status-mode) .qtile.done{background:#0F172A;}
   body.dark-mode:not(.status-mode) .qavatar.done{background:#1F2937; color:#64748B;}
