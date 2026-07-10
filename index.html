@@ -238,6 +238,59 @@
   .qtag.off{background:var(--amber);}
   #queueList .empty{text-align:center; color:#94A3B8; padding:40px 0; font-size:14px;}
 
+  body.dark-mode:not(.status-mode){
+    --ink:#F8FAFC;
+    --ink-soft:#CBD5E1;
+    --mist:#94A3B8;
+    --paper:#0B1120;
+    --line:#1E293B;
+    --shadow: 0 16px 40px rgba(0,0,0,.28);
+    background:#0B1120;
+    color:var(--ink);
+  }
+  body.dark-mode:not(.status-mode) header,
+  body.dark-mode:not(.status-mode) .card,
+  body.dark-mode:not(.status-mode) .qtile{
+    background:#111827;
+    border-color:var(--line);
+  }
+  body.dark-mode:not(.status-mode) header{box-shadow:0 12px 30px rgba(0,0,0,.18);}
+  body.dark-mode:not(.status-mode) .icon-btn,
+  body.dark-mode:not(.status-mode) select#doctorSelect,
+  body.dark-mode:not(.status-mode) .voice-pill,
+  body.dark-mode:not(.status-mode) .status-toggle button{
+    background:#1E293B;
+    border-color:#334155;
+    color:#CBD5E1;
+  }
+  body.dark-mode:not(.status-mode) .icon-btn:hover,
+  body.dark-mode:not(.status-mode) .status-toggle button:hover{background:#334155;}
+  body.dark-mode:not(.status-mode) .icon-btn.danger{background:rgba(239,68,68,.16); color:#FCA5A5;}
+  body.dark-mode:not(.status-mode) .icon-btn.danger:hover{background:rgba(239,68,68,.24);}
+  body.dark-mode:not(.status-mode) .theme-toggle.active{
+    background:rgba(6,182,212,.16);
+    color:#67E8F9;
+  }
+  body.dark-mode:not(.status-mode) .brand-text span,
+  body.dark-mode:not(.status-mode) #docWork,
+  body.dark-mode:not(.status-mode) .now-serving-label,
+  body.dark-mode:not(.status-mode) .footer-note{color:#94A3B8;}
+  body.dark-mode:not(.status-mode) #emptyState h3,
+  body.dark-mode:not(.status-mode) #queueCol h3{color:#E2E8F0;}
+  body.dark-mode:not(.status-mode) #docPhotoWrap,
+  body.dark-mode:not(.status-mode) #serialDisplay{background:#0F172A; border-color:#111827;}
+  body.dark-mode:not(.status-mode) .spec-badge,
+  body.dark-mode:not(.status-mode) .status-toggle button.active{
+    background:rgba(99,102,241,.18);
+    border-color:rgba(129,140,248,.35);
+    color:#A5B4FC;
+  }
+  body.dark-mode:not(.status-mode) .stat-box.blue{background:rgba(59,130,246,.14);}
+  body.dark-mode:not(.status-mode) .stat-box.orange{background:rgba(245,158,11,.14);}
+  body.dark-mode:not(.status-mode) .qtile.done{background:#0F172A;}
+  body.dark-mode:not(.status-mode) .qavatar.done{background:#1F2937; color:#64748B;}
+  body.dark-mode:not(.status-mode) hr{border-top-color:var(--line);}
+
   /* Audio unlock overlay */
   #audioOverlay{
     position:absolute; inset:0; background:rgba(15,23,42,.95); display:none;
@@ -402,6 +455,10 @@
     <button class="icon-btn" id="testSoundBtn" style="display:none;" title="Test sound">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4V8z" fill="currentColor" stroke="none"/></svg>
     </button>
+    <button class="icon-btn theme-toggle" id="themeToggleBtn" title="Dark mode" aria-label="Dark mode">
+      <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      <svg class="theme-icon-moon" style="display:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
     <select id="doctorSelect"><option value="">ডাক্তার নির্বাচন করুন</option></select>
     <button class="icon-btn danger" id="logoutBtn" title="Logout">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
@@ -445,6 +502,28 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 const $ = (id) => document.getElementById(id);
+const THEME_STORAGE_KEY = "docpoint-admin-theme";
+
+function applyTheme(theme){
+  const isDark = theme === "dark";
+  document.body.classList.toggle("dark-mode", isDark);
+  const btn = $("themeToggleBtn");
+  if (!btn) return;
+  btn.classList.toggle("active", isDark);
+  btn.title = isDark ? "Light mode" : "Dark mode";
+  btn.setAttribute("aria-label", btn.title);
+  const sun = btn.querySelector(".theme-icon-sun");
+  const moon = btn.querySelector(".theme-icon-moon");
+  if (sun) sun.style.display = isDark ? "none" : "block";
+  if (moon) moon.style.display = isDark ? "block" : "none";
+}
+
+function setTheme(theme){
+  localStorage.setItem(THEME_STORAGE_KEY, theme);
+  applyTheme(theme);
+}
+
+applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || "light");
 
 /* ---------------- PUBLIC STATUS ROUTE ---------------- */
 let statusUnsubs = [];
@@ -770,6 +849,9 @@ $("loginForm").addEventListener("submit", async (e) => {
 });
 
 $("logoutBtn").addEventListener("click", () => signOut(auth));
+$("themeToggleBtn").addEventListener("click", () => {
+  setTheme(document.body.classList.contains("dark-mode") ? "light" : "dark");
+});
 
 let adminUid = null;
 let unsubscribers = [];
