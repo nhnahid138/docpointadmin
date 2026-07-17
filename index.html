@@ -21,12 +21,13 @@
     --shadow: 0 10px 30px rgba(15,23,42,.06);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  html,body{height:100%;}
+  html,body{min-height:100%;}
   body{
     font-family:'Manrope', 'Noto Sans Bengali', sans-serif;
     background:var(--paper);
     color:var(--ink);
-    overflow:hidden;
+    overflow-x:hidden;
+    overflow-y:auto;
   }
   body.status-mode{overflow:auto;}
   .bn{font-family:'Noto Sans Bengali','Manrope',sans-serif;}
@@ -42,6 +43,8 @@
       radial-gradient(900px 500px at 100% 100%, rgba(6,182,212,.14), transparent 60%),
       #0B1120;
     z-index:100;
+    overflow-y:auto;
+    padding:20px;
   }
   .login-card{
     width:400px; max-width:92vw;
@@ -49,7 +52,7 @@
     border:1px solid rgba(255,255,255,.08);
     backdrop-filter: blur(20px);
     border-radius:28px;
-    padding:44px 38px;
+    padding:clamp(24px,5vh,44px) clamp(20px,4vw,38px);
     color:#fff;
   }
   .login-mark{
@@ -82,7 +85,7 @@
   }
 
   /* ---------- APP SHELL ---------- */
-  #app{display:none; height:100vh; flex-direction:column;}
+  #app{display:none; min-height:100dvh; flex-direction:column; min-width:0;}
   header{
     height:90px; background:#fff; border-bottom:1px solid var(--line);
     display:flex; align-items:center; padding:0 24px; gap:18px; flex-shrink:0;
@@ -123,7 +126,8 @@
     font-weight:800; font-size:13.5px; color:var(--ink); outline:none; max-width:220px;
   }
 
-  main{flex:1; padding:20px; display:grid; grid-template-columns:3fr 5fr 4fr; gap:20px; overflow:hidden;}
+  main{flex:1; height:calc(100dvh - 90px); padding:20px; display:grid; grid-template-columns:minmax(240px,3fr) minmax(0,5fr) minmax(240px,4fr); gap:20px; overflow:hidden; min-height:0;}
+  #mainGrid > *{min-width:0;}
 
   #emptyState{
     grid-column:1/-1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
@@ -140,7 +144,7 @@
   #statusBanner svg{width:20px;height:20px;}
 
   /* Doctor card */
-  .card{background:#fff; border-radius:32px; box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column;}
+  .card{background:#fff; border-radius:32px; box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column; min-width:0; min-height:0;}
   #doctorCard{padding:30px 24px; align-items:center; text-align:center; overflow-y:auto;}
   .status-chip{
     display:inline-flex; align-items:center; gap:8px; padding:7px 18px; border-radius:20px;
@@ -150,7 +154,7 @@
   .status-chip.on{background:linear-gradient(135deg,#10B981,#059669); box-shadow:0 4px 12px rgba(16,185,129,.3);}
   .status-chip.off{background:linear-gradient(135deg,#F59E0B,#D97706); box-shadow:0 4px 12px rgba(245,158,11,.3);}
   #docPhotoWrap{
-    width:150px; height:150px; border-radius:50%; background:var(--paper); border:8px solid #fff;
+    width:clamp(120px,12vw,150px); height:clamp(120px,12vw,150px); border-radius:50%; background:var(--paper); border:8px solid #fff;
     box-shadow:0 10px 30px rgba(0,0,0,.08); display:flex; align-items:center; justify-content:center;
     overflow:hidden; margin-bottom:20px; flex-shrink:0;
   }
@@ -176,7 +180,7 @@
   hr{border:none; border-top:1px solid var(--line); width:100%; margin:18px 0;}
 
   /* Counter section */
-  #counterCol{display:flex; flex-direction:column; gap:16px; overflow:hidden;}
+  #counterCol{display:flex; flex-direction:column; gap:16px; overflow-y:auto; overflow-x:hidden; min-height:0;}
   .stat-row{display:flex; gap:16px; flex-shrink:0;}
   .stat-box{
     flex:1; padding:18px; border-radius:22px; text-align:center;
@@ -205,11 +209,13 @@
   }
   #serialDisplay.break{background:rgba(245,158,11,.06);}
   #serialNum{font-size:min(18vw,220px); font-weight:900; color:#3B82F6; line-height:.9;}
+  #serialNum{font-size:clamp(72px,18vw,220px);}
   #serialNum.break{color:var(--amber);}
   #currentPatientName{
     margin-top:20px; max-width:min(92%,620px); min-height:44px; color:#1D4ED8;
-    font-size:clamp(20px,2.2vw,32px); font-weight:900; line-height:1.1;
-    text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    font-size:clamp(18px,2.2vw,32px); font-weight:900; line-height:1.15;
+    text-align:center; white-space:normal; overflow:hidden; text-overflow:ellipsis;
+    display:-webkit-box; line-clamp:2; -webkit-line-clamp:2; -webkit-box-orient:vertical;
     padding:10px 22px; border-radius:999px;
     background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(6,182,212,.12));
     border:1px solid rgba(59,130,246,.22);
@@ -224,7 +230,7 @@
   .footer-note.break{color:var(--amber); font-weight:900;}
 
   /* Queue */
-  #queueCol{overflow:hidden;}
+  #queueCol{overflow:hidden; min-height:0;}
   #queueCol h3{padding:26px 26px 14px; font-size:18px; font-weight:900; letter-spacing:1px; color:#2C3E50; flex-shrink:0;}
   #queueList{flex:1; overflow-y:auto; padding:16px 20px; display:flex; flex-direction:column; gap:10px;}
   #queueList::-webkit-scrollbar{width:6px;}
@@ -347,7 +353,7 @@
   #activateBtn svg{width:24px;height:24px;}
   .overlay-hint{margin-top:22px; font-size:11.5px; color:rgba(255,255,255,.25);}
 
-  #mainStage{position:relative; grid-column:2/3; display:flex; min-height:0;}
+  #mainStage{position:relative; grid-column:2/3; display:flex; min-height:0; min-width:0;}
 
   /* ---------- PUBLIC STATUS PAGE ---------- */
   #statusPage{
@@ -375,7 +381,7 @@
   .status-counter{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; min-height:460px;}
   .status-counter-label{color:#3B82F6; font-weight:900; letter-spacing:10px; font-size:24px; text-align:center;}
   .status-circle{
-    width:min(34vw,450px); height:min(34vw,450px); min-width:300px; min-height:300px;
+    width:min(34vw,34vh,450px); height:min(34vw,34vh,450px); min-width:300px; min-height:300px;
     margin-top:30px; border-radius:50%; padding:34px;
     background:linear-gradient(135deg,#6366F1,#4F46E5);
     box-shadow:0 0 80px rgba(99,102,241,.32);
@@ -428,8 +434,8 @@
   .status-error{min-height:100vh; color:#FCA5A5; font-size:24px; padding:30px;}
 
   @media (max-width: 1100px){
-    main{grid-template-columns:1fr; overflow-y:auto;}
-    #mainStage{min-height:520px;}
+    main{height:auto; min-height:calc(100dvh - 90px); grid-template-columns:1fr; overflow:visible;}
+    #mainStage{grid-column:auto; min-height:520px;}
     .status-shell{grid-template-columns:1fr; padding:20px; gap:30px;}
     .status-head{justify-content:center; padding:10px;}
     .status-logo{width:60px; height:60px; border-radius:18px;}
@@ -437,7 +443,7 @@
     .status-hospital p{font-size:14px;}
     .status-counter{min-height:auto; padding:30px 0 10px;}
     .status-counter-label{font-size:16px; letter-spacing:7px;}
-    .status-circle{width:300px; height:300px; min-width:0; min-height:0; padding:24px;}
+    .status-circle{width:min(300px,calc(100vw - 40px)); height:min(300px,calc(100vw - 40px)); min-width:0; min-height:0; padding:24px;}
     #statusNowNumber{font-size:120px;}
     .status-doctor{border-radius:28px; padding:22px; margin:20px 0 0; width:100%;}
     .status-doc-text h2{font-size:20px;}
@@ -447,6 +453,183 @@
     #statusQueue{padding:20px; overflow:visible;}
     .status-token{gap:16px; padding:18px;}
     .status-token-name{font-size:17px;}
+  }
+
+  @media (max-width: 1400px){
+    main{padding:16px; gap:16px;}
+    #doctorCard{padding:24px 18px;}
+    #queueCol h3{padding:22px 22px 12px;}
+    #queueList{padding:14px 16px;}
+    .qname{font-size:15px;}
+    .stat-row{gap:12px;}
+    .stat-box{padding:16px; border-radius:20px;}
+    .stat-box .val{font-size:26px;}
+    #serveBox{padding:22px 22px;}
+    .now-serving-label{font-size:18px; letter-spacing:6px;}
+    .round-btn{width:58px; height:58px;}
+    .round-btn svg{width:24px; height:24px;}
+  }
+
+  @media (max-width: 820px){
+    body{overflow:hidden;}
+    #app{height:100dvh; min-height:0; overflow:hidden;}
+    header{height:74px; min-height:74px; padding:10px 12px; gap:8px; flex-wrap:nowrap;}
+    header .spacer{display:none;}
+    .brand-text{flex:1; min-width:0;}
+    .brand-text h2,.brand-text span{display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+    .brand-text h2{font-size:17px;}
+    .brand-text span{font-size:12px;}
+    select#doctorSelect{order:0; width:auto; max-width:clamp(110px,25vw,180px); flex:0 1 180px; padding:9px 10px;}
+    main{height:calc(100dvh - 74px); min-height:0; padding:8px; gap:8px; overflow:hidden; grid-template-columns:1fr; grid-template-rows:minmax(82px,.8fr) minmax(0,2.4fr) minmax(110px,1.15fr);}
+    .card{border-radius:22px;}
+    #doctorCard{display:grid; grid-template-columns:58px minmax(0,1fr) auto; grid-template-rows:auto auto; align-content:center; align-items:center; column-gap:10px; row-gap:3px; padding:10px 12px; text-align:left; overflow:hidden;}
+    #doctorCard .status-chip,#doctorCard #docQual,#doctorCard #docWork,#doctorCard hr,#doctorCard #adWrap{display:none !important;}
+    #docPhotoWrap{grid-column:1; grid-row:1 / 3; width:58px; height:58px; margin:0; border-width:4px;}
+    #docPhotoWrap svg{width:30px; height:30px;}
+    #doctorCard h2{grid-column:2; grid-row:1; min-width:0; font-size:clamp(14px,2.5vw,18px); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+    .spec-badge{grid-column:2; grid-row:2; width:max-content; max-width:100%; margin-top:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+    .status-toggle{grid-column:3; grid-row:1 / 3; width:auto; margin:0; gap:5px;}
+    .status-toggle button{min-width:46px; padding:8px 5px; font-size:9px;}
+    #counterCol{gap:8px; overflow:hidden;}
+    #mainStage{min-height:0; grid-row:2;}
+    #queueCol{min-height:0; grid-row:3;}
+    .stat-row{gap:10px;}
+    .stat-box{padding:8px 10px; border-radius:16px;}
+    .stat-box .lbl{font-size:9px;}
+    .stat-box .val{font-size:22px;}
+    #serveBox{padding:10px 12px; overflow:hidden;}
+    .now-serving-label{font-size:14px; letter-spacing:4px;}
+    .serial-row{gap:10px;}
+    .round-btn{width:42px; height:42px;}
+    .round-btn svg{width:18px; height:18px;}
+    #serialDisplay{padding:8px 10px; border-radius:20px;}
+    #serialNum{font-size:clamp(44px,13vh,100px);}
+    #currentPatientName{margin-top:7px; padding:6px 10px; width:100%; min-height:30px; font-size:clamp(11px,2.5vw,16px);}
+    .footer-note{margin-top:7px; font-size:9px; letter-spacing:.7px;}
+    #queueCol h3{padding:9px 12px 5px; font-size:14px;}
+    #queueList{padding:6px 8px; gap:5px; overflow:hidden;}
+    .qtile{min-height:0; flex:1 1 0; padding:5px 8px; gap:8px; border-radius:14px;}
+    .qavatar{width:30px; height:30px; font-size:11px;}
+    .qname{font-size:13px;}
+    .qtag{padding:3px 8px; font-size:8.5px;}
+  }
+
+  @media (max-width: 560px){
+    header{padding:8px 10px; gap:6px;}
+    .brand-mark{width:40px; height:40px; border-radius:12px;}
+    .brand-text h2{font-size:15px;}
+    .brand-text span{font-size:11px;}
+    .voice-pill{display:none;}
+    .icon-btn{width:32px; height:32px; border-radius:10px;}
+    .icon-btn svg{width:16px; height:16px;}
+    select#doctorSelect{max-width:120px; padding:8px; font-size:11px;}
+    main{grid-template-rows:minmax(76px,.75fr) minmax(0,2.5fr) minmax(96px,1fr);}
+    .card{border-radius:18px;}
+    #doctorCard{grid-template-columns:48px minmax(0,1fr) auto; padding:8px 10px; column-gap:7px;}
+    #doctorCard h2{font-size:16px;}
+    #docPhotoWrap{width:48px; height:48px; border-width:3px;}
+    #docPhotoWrap svg{width:38px; height:38px;}
+    .spec-badge{padding:5px 10px; font-size:10px;}
+    .status-toggle button{min-width:39px; font-size:8px; padding:7px 3px;}
+    .stat-row{gap:8px;}
+    .stat-box{padding:10px 8px; border-radius:14px;}
+    .stat-box .val{font-size:18px;}
+    .stat-box .lbl{font-size:8px; letter-spacing:.6px;}
+    #serveBox{padding:8px 10px;}
+    .now-serving-label{font-size:12px; letter-spacing:3px;}
+    .serial-row{gap:8px;}
+    .round-btn{width:36px; height:36px;}
+    .round-btn svg{width:16px; height:16px;}
+    #serialDisplay{padding:6px 8px; border-radius:16px;}
+    #serialNum{font-size:clamp(38px,12vh,78px);}
+    #currentPatientName{margin-top:5px; min-height:26px; padding:5px 8px; font-size:clamp(10px,2.7vw,13px);}
+    .footer-note{margin-top:5px; font-size:8px;}
+    #queueCol h3{padding:7px 10px 3px; font-size:12px;}
+    #queueList{padding:4px 6px; gap:3px;}
+    .qtile{padding:3px 6px;}
+    .qavatar{width:26px; height:26px; font-size:10px;}
+    .qname{font-size:12px;}
+  }
+
+  /* Short landscape displays keep every panel reachable instead of clipping it. */
+  @media (min-width: 821px) and (max-height: 760px){
+    header{height:72px; padding:0 16px; gap:12px;}
+    .brand-mark{width:42px; height:42px; border-radius:13px;}
+    .brand-text h2{font-size:17px;}
+    .brand-text span{font-size:11px;}
+    main{height:calc(100dvh - 72px); padding:12px; gap:12px;}
+    #doctorCard{padding:16px;}
+    .status-chip{margin-bottom:12px;}
+    #docPhotoWrap{width:92px; height:92px; margin-bottom:12px; border-width:5px;}
+    #doctorCard h2{font-size:18px;}
+    #docQual{font-size:12px;}
+    #docWork{font-size:11px;}
+    .status-toggle{margin-top:12px;}
+    #adWrap{margin-top:12px;}
+    .stat-box{padding:10px;}
+    #serveBox{padding:14px;}
+    .now-serving-label{font-size:14px; letter-spacing:4px;}
+    .round-btn{width:46px; height:46px;}
+    #serialNum{font-size:clamp(56px,14vh,130px);}
+    #currentPatientName{margin-top:10px; font-size:clamp(13px,2.2vw,20px);}
+    .footer-note{margin-top:9px;}
+    #queueCol h3{padding:16px 18px 8px;}
+    #queueList{padding:10px 14px; gap:7px;}
+  }
+
+  @media (max-width: 380px){
+    .brand-text h2{font-size:14px;}
+    .brand-text span{display:none;}
+    select#doctorSelect{max-width:100px;}
+    main{grid-template-rows:minmax(66px,.72fr) minmax(0,2.6fr) minmax(82px,.9fr); gap:5px; padding:5px;}
+    #doctorCard{grid-template-columns:42px minmax(0,1fr) auto; padding:6px 8px;}
+    #docPhotoWrap{width:42px; height:42px;}
+    .spec-badge{padding:3px 7px; font-size:8px;}
+    .status-toggle{gap:3px;}
+    .status-toggle button{min-width:35px; padding:6px 2px; font-size:7px;}
+    .stat-box{padding:5px;}
+    .stat-box .val{font-size:16px;}
+    #serveBox{padding:6px;}
+    .now-serving-label{font-size:10px; letter-spacing:2px;}
+    #serialNum{font-size:clamp(34px,11vh,62px);}
+    .round-btn{width:30px; height:30px;}
+    .round-btn svg{width:13px; height:13px;}
+    #queueCol h3{font-size:11px;}
+    .qavatar{display:none;}
+  }
+
+  /* Compact landscape screens (for example, a small wall display) stay in one view. */
+  @media (max-width: 820px) and (max-height: 500px){
+    header{height:58px; min-height:58px; padding:6px 10px;}
+    .brand-mark{width:34px; height:34px; border-radius:10px;}
+    .brand-text h2{font-size:13px;}
+    .brand-text span{display:none;}
+    .icon-btn{width:30px; height:30px;}
+    select#doctorSelect{max-width:110px; padding:7px; font-size:10px;}
+    main{height:calc(100dvh - 58px); grid-template-rows:minmax(54px,.65fr) minmax(0,2.3fr) minmax(66px,.8fr); gap:5px; padding:5px;}
+    #doctorCard{grid-template-columns:40px minmax(0,1fr) auto; padding:5px 8px;}
+    #docPhotoWrap{width:40px; height:40px; border-width:3px;}
+    #doctorCard h2{font-size:13px;}
+    .spec-badge{padding:3px 7px; font-size:8px;}
+    .status-toggle button{min-width:35px; padding:5px 2px; font-size:7px;}
+    #counterCol{gap:4px;}
+    .stat-box{padding:4px; border-width:1px;}
+    .stat-box .lbl{font-size:7px;}
+    .stat-box .val{margin-top:0; font-size:15px;}
+    #serveBox{padding:5px;}
+    .now-serving-label{font-size:9px; letter-spacing:2px;}
+    .serial-row{gap:5px;}
+    .round-btn{width:28px; height:28px; border-width:1px;}
+    .round-btn svg{width:12px; height:12px;}
+    #serialDisplay{padding:4px 6px;}
+    #serialNum{font-size:clamp(30px,12vh,58px);}
+    #currentPatientName{display:none;}
+    .footer-note{display:none;}
+    #queueCol h3{padding:4px 8px 2px; font-size:10px;}
+    #queueList{padding:3px 5px; gap:2px;}
+    .qtile{padding:2px 5px; border-radius:8px;}
+    .qavatar,.qtag{display:none;}
+    .qname{font-size:10px;}
   }
 </style>
 </head>
